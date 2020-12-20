@@ -1,220 +1,166 @@
-#ifndef _MY_VECTOR_
-#define _MY_VECTOR_
+#ifndef _QUEUELIST_
+#define _QUEUELIST_
 
-#include <iostream>
+#include "TList.h"
 
 using namespace std;
 
 template <class T>
-class Vector
+class TQueueList
 {
 protected:
-  int length;
-  T* x;
+
+	TList<T> list;
 public:
-  Vector<T>* vec;
-  Vector();
-  Vector(T _v);
-  Vector(int rowsCount, T* _v);
-  Vector(int rowsCount, T _v);
-  Vector(Vector<T>& _v);
-  ~Vector();
 
-  Vector<T> operator +(Vector<T>& _v);
-  Vector<T> operator -(Vector<T>& _v);
-  Vector<T> operator *(Vector<T>& _v);
-  Vector<T> operator /(Vector<T>& _v);
-  Vector<T>& operator =(Vector<T>& _v);
-  T& operator[] (const int index);
+	TQueueList();
+	TQueueList(TQueueList<T>& _v);
 
-  Vector<T>& operator ++();
-  Vector<T>& operator --();
-  Vector<T>& operator +=(Vector<T>& _v);
-  Vector<T>& operator -=(Vector<T>& _v);
+	TQueueList<T>& operator =(TQueueList<T>& _v);
 
-  template <class T1>
-  friend ostream& operator<< (ostream& ostr, const Vector<T1> &A);
-  template <class T1>
-  friend istream& operator >> (istream& istr, Vector<T1> &A);
+	void Push(T d);
+	T Get();
 
-  int Length();
+	int IsEmpty(void) const;
+	int IsFull(void) const;
+
+
+	T Min_elem();
+	T Max_elem();
+
+	template <class T1>
+	friend ostream& operator<< (ostream& ostr, const TQueueList<T1>& A);
+	template <class T1>
+	friend istream& operator>> (istream& istr, TQueueList<T1>& A);
+
+	int GetCount();
+
 };
 
-template <class T1>
-ostream& operator<< (ostream& ostr, const Vector<T1> &A) {
-  for (int i = 0; i < A.length; i++) {
-    ostr << A.x[i] << endl;
-  }
-  return ostr;
+template<class T1>
+inline ostream& operator<<(ostream& ostr, const TQueueList<T1>& A)
+{
+	return ostr << A.list;
 }
 
-template <class T1>
-istream& operator >> (istream& istr, Vector<T1> &A) {
-  for (int i = 0; i < A.length; i++) {
-    istr >> A.x[i];
-  }
-  return istr;
+template<class T1>
+inline istream& operator>>(istream& istr, TQueueList<T1>& A)
+{
+	return istr >> A.list;
 }
 
-#define MIN(a,b)(a>b?b:a)
-#define MAX(a,b)(a>b?a:b)
+template<class T>
+inline TQueueList<T>::TQueueList()
+{
 
-template <class T>
-Vector<T>::Vector()
-{
-  length = 0;
-  x = 0;
-}
-template <class T>
-Vector<T>::Vector(T _v)
-{
-  length = 1;
-  x = new T [length];
-  x[0] = _v;
-}
-template <class T>
-Vector<T>::Vector(int rowsCount, T* _v)
-{
-  length = rowsCount;
-
-  ///x = _v;
-
-  x = new T [length];
-  for (int i = 0; i < length; i++)
-    x[i] = _v[i];
-}
-template <class T>
-Vector<T>::Vector(int rowsCount, T _v)
-{
-  length = rowsCount;
-  x = new T [length];
-  for (int i = 0; i < length; i++)
-    x[i] = _v;
-}
-template <class T>
-Vector<T>::Vector(Vector<T>& _v)
-{
-  length = _v.length;
-  x = new T [length];
-  for (int i = 0; i < length;i = i + 1)
-    x[i] = _v.x[i];
-}
-template <class T>
-Vector<T>::~Vector()
-{
-  length = 0;
-  if (x != 0)
-    delete [] x;
-  x = 0;
-}
-template <class T>
-Vector<T> Vector<T>::operator +(Vector<T>& _v)
-{
-  Vector<T> res;
-  res.length = MIN(length, _v.length);
-  res.x = new T [res.length];
-  for (int i = 0; i < res.length; i++)
-  {
-    res.x[i] = x[i] + _v.x[i];
-  }
-  return res;
-}
-template <class T>
-Vector<T> Vector<T>::operator -(Vector<T>& _v)
-{
-  Vector<T> res;
-  res.length = MIN(length, _v.length);
-  res.x = new T [res.length];
-  for (int i = 0; i < res.length; i++)
-  {
-    res.x[i] = x[i] - _v.x[i];
-  }
-  return res;
-}
-template <class T>
-Vector<T> Vector<T>::operator *(Vector<T>& _v)
-{
-  Vector<T> res;
-  res.length = MIN(length, _v.length);
-  res.x = new T [res.length];
-  for (int i = 0; i < res.length; i++)
-  {
-    res.x[i] = x[i] * _v.x[i];
-  }
-  return res;
-}
-template <class T>
-Vector<T> Vector<T>::operator /(Vector<T>& _v)
-
-{
-  Vector<T> res;
-  res.length = MIN(length, _v.length);
-  res.x = new T [res.length];
-  for (int i = 0; i < res.length; i++)
-  {
-    res.x[i] = x[i] / _v.x[i];
-  }
-  return res;
-}
-template <class T>
-Vector<T>& Vector<T>::operator =(Vector<T>& _v)
-{
-  if (this == &_v)
-    return *this;
-
-  length = _v.length;
-  x = new T [length];
-  for (int i = 0; i < length; i++)
-    x[i] = _v.x[i];
-  return *this;
-}
-template <class T>
-T& Vector<T>::operator[] (const int index)
-{
-  if ((index >= 0) && (index < length))
-    return x[index];
-  return x[0];
 }
 
-template <class T>
-Vector<T>& Vector<T>::operator ++()
+template<class T>
+inline TQueueList<T>::TQueueList(TQueueList<T>& _v)
 {
-  for (int i = 0; i < length; i++)
-    x[i]++;
-  return *this;
-}
-template <class T>
-Vector<T>& Vector<T>::operator --()
-{
-  for (int i = 0; i < length; i++)
-    x[i]--;
-  return *this;
-}
-template <class T>
-Vector<T>& Vector<T>::operator +=(Vector<T>& _v)
-{
-  length = MIN(length, _v.length);
-  for (int i = 0; i < length; i++)
-  {
-    x[i] += _v.x[i];
-  }
-  return *this;
-}
-template <class T>
-Vector<T>& Vector<T>::operator -=(Vector<T>& _v)
-{
-  length = MIN(length, _v.length);
-  for (int i = 0; i < length; i++)
-  {
-    x[i] -= _v.x[i];
-  }
-  return *this;
-}
-template <class T>
-int Vector<T>::Length()
-{
-  return length;
+	list = _v.list;
 }
 
+template<class T>
+inline TQueueList<T>& TQueueList<T>::operator=(TQueueList<T>& _v)
+{
+	if (this == &_v)
+	{
+		return *this;
+	}
+	else
+	{
+		list = _v.list;
+	}
+
+	return *this;
+}
+
+template<class T>
+inline void TQueueList<T>::Push(T d)
+{
+	list.InsLast(d);
+}
+
+template<class T>
+inline T TQueueList<T>::Get()
+{
+	if (list.IsEmpty())
+	{
+		throw logic_error("Error");
+	}
+
+	T tmp = list.GetFirst()->GetData();
+	list.DelFirst();
+
+	return tmp;
+}
+
+template<class T>
+inline int TQueueList<T>::IsEmpty(void) const
+{
+	return list.IsEmpty();
+}
+
+template<class T>
+inline int TQueueList<T>::IsFull(void) const
+{
+	return list.IsFull();
+}
+
+template<class T>
+inline T TQueueList<T>::Min_elem()
+{
+	int count = this->GetCount();
+	T tmp = NULL;
+	for (int i = 0; i < count; i++)
+	{
+		if (tmp == NULL)
+		{
+			tmp = this->Get();
+		}
+		else
+		{
+			T tmp_for = this->Get();
+			if (tmp_for < tmp)
+			{
+				tmp = tmp_for;
+			}
+		}
+	}
+
+	return tmp;
+}
+
+template<class T>
+inline T TQueueList<T>::Max_elem()
+{
+	int count = this->GetCount();
+	T tmp = NULL;
+	for (int i = 0; i < count; i++)
+	{
+		if (tmp == NULL)
+		{
+			tmp = this->Get();
+		}
+		else
+		{
+			T tmp_for = this->Get();
+			if (tmp_for > tmp)
+			{
+				tmp = tmp_for;
+			}
+		}
+	}
+
+	return tmp;
+}
+
+
+template<class T>
+inline int TQueueList<T>::GetCount()
+{
+	return list.GetCount();
+}
 
 #endif
